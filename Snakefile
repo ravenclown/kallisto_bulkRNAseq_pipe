@@ -1,9 +1,9 @@
 configfile:"config.yaml"
 cwd = os.getcwd()
-
+accession=config["accession"]
 rule all:
     input:
-      "sleuth_object.so"
+      "sleuth_object.so",
       "gene_table_results.txt"
 
 rule fetch_FASTQ_from_SRA:
@@ -35,29 +35,31 @@ rule downloadKallistoIndex:
 
 rule kallistoQuant:
     input:
-      "homo_sapiens/Homo_sapiens.GRCh38.96.gtf",
-      "homo_sapiens/Homo_sapiens.GRCh38.cdna.all.fa",
-      "homo_sapiens/transcriptome.idx",
-      "homo_sapiens/transcripts_to_genes.txt",
-      r1="reads/{accession}/{accession}_1.fastq",
-      r2="reads/{accession}/{accession}_2.fastq"
+        "homo_sapiens/Homo_sapiens.GRCh38.96.gtf",
+        "homo_sapiens/Homo_sapiens.GRCh38.cdna.all.fa",
+        "homo_sapiens/transcripts_to_genes.txt",
+        index="homo_sapiens/transcriptome.idx",
+        r1="reads/{accession}/{accession}_1.fastq",
+        r2="reads/{accession}/{accession}_2.fastq",
     output:
         "abundance.h5",
         "abundance.tsv",
         "run_info.json"
     params:
-      bootstrap="100"
+        bootstrap="100",
+        folder = "quant/{accession}"
     conda:
-      "env.yml"
+        "env.yml"
     shell:
-        "mkdir -p quant/{wildcards.accession} && kallisto quant -b {params.bootstrap} -i homo_sapiens/transcriptome.idx -o quant/{wildcards.accession} {input.r1} {input.r2}
+        "mkdir -p {params.folder} && \
+        kallisto quant -b {params.bootstrap} -i {input.index} -o {params.folder} {input.r1} {input.r2}"
 
 rule mergeQuant:
     input:
         expand("quant/{accession}/abundance.h5",accession=config["accession"])
     output:
-        "sleuth_object.so"
-        "gene_table_results.txt"
+        out1="sleuth_object.so",
+        out2="gene_table_results.txt"
     params:
       wd=cwd
     conda:
