@@ -1,10 +1,10 @@
 configfile:"config.yaml"
+cwd = os.getcwd()
 
 rule all:
     input:
-      "quant/abundance.h5",
-      "quant/abundance.tsv",
-      "quant/run_info.json"
+      "sleuth_object.so"
+      "gene_table_results.txt"
 
 rule fetch_FASTQ_from_SRA:
     output:
@@ -45,7 +45,22 @@ rule kallistoQuant:
         "abundance.h5",
         "abundance.tsv",
         "run_info.json"
+    params:
+      bootstrap="100"
     conda:
       "env.yml"
     shell:
-        "mkdir -p quant/{wildcards.accession} && kallisto quant -i homo_sapiens/transcriptome.idx -o quant/{wildcards.accession} {input.r1} {input.r2}
+        "mkdir -p quant/{wildcards.accession} && kallisto quant -b {params.bootstrap} -i homo_sapiens/transcriptome.idx -o quant/{wildcards.accession} {input.r1} {input.r2}
+
+rule mergeQuant:
+    input:
+        expand(quant/{accession}/abundance.h5)
+    output:
+        "sleuth_object.so"
+        "gene_table_results.txt"
+    params:
+      wd=cwd
+    conda:
+      "r.yml"
+    shell:
+      "Rscript scripts/sleuthR.R {params.wd}"
