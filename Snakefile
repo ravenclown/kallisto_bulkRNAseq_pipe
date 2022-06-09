@@ -54,7 +54,7 @@ rule kallistoQuant:
 
 rule mergeQuant:
     input:
-        expand(quant/{accession}/abundance.h5)
+        expand("quant/{accession}/abundance.h5",accession=config["accession"])
     output:
         "sleuth_object.so"
         "gene_table_results.txt"
