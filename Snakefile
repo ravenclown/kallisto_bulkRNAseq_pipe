@@ -30,8 +30,8 @@ rule downloadKallistoIndex:
     conda:
       "env.yml"
     shell:
-      "curl https://github.com/pachterlab/kallisto-transcriptome-indices/releases/download/ensembl-96/homo_sapiens.tar.gz && \
-      gunzip homo_sapiens.tar.gz"
+      'wget https://github.com/pachterlab/kallisto-transcriptome-indices/releases/download/ensembl-96/homo_sapiens.tar.gz && \
+      gunzip homo_sapiens.tar.gz'
 
 rule kallistoQuant:
     input:
@@ -42,9 +42,9 @@ rule kallistoQuant:
         r1="reads/{accession}/{accession}_1.fastq",
         r2="reads/{accession}/{accession}_2.fastq",
     output:
-        "abundance.h5",
-        "abundance.tsv",
-        "run_info.json"
+        "quant/{accession}/abundance.h5",
+        "quant/{accession}/abundance.tsv",
+        "quant/{accession}/run_info.json"
     params:
         bootstrap="100",
         folder = "quant/{accession}"
