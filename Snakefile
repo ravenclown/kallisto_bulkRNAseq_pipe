@@ -31,7 +31,7 @@ rule downloadKallistoIndex:
       "env.yml"
     shell:
       'wget https://github.com/pachterlab/kallisto-transcriptome-indices/releases/download/ensembl-96/homo_sapiens.tar.gz && \
-      gunzip homo_sapiens.tar.gz'
+      tar –xvzf homo_sapiens.tar.gz'
 
 rule kallistoQuant:
     input:
