@@ -5,3 +5,4 @@ dependencies:
   - r-dplyr
   - r-sleuth
   - bioconductor-biomart
+  - r-devtools
