@@ -22,7 +22,7 @@ rule downloadKallistoIndex:
 if config["read_type"]== "SE":
     rule fetch_FASTQ_from_SRA_SE:
         output:
-            "reads/{accession}/{accession}.fastq"
+            temp("reads/{accession}/{accession}.fastq")
         params:
             args = "--progress --details",
             accession = "{accession}"
@@ -37,8 +37,8 @@ if config["read_type"]== "SE":
 if config["read_type"]== "PE":
     rule fetch_FASTQ_from_SRA_PE:
         output:
-            "reads/{accession}/{accession}_1.fastq",
-            "reads/{accession}/{accession}_2.fastq"
+            temp("reads/{accession}/{accession}_1.fastq"),
+            temp("reads/{accession}/{accession}_2.fastq")
         params:
             args = "--split-files --progress --details",
             accession = "{accession}"
