@@ -8,8 +8,8 @@ base_dir <- args[1]
 condition_df <- read.table(args[2] ,sep = "\n",col.names = "condition")
 setwd(base_dir)
 #get sample id and directories
-sample_id <- dir(file.path(base_dir,"rscript_test"))
-kal_dirs <- sapply(sample_id, function(id) file.path(base_dir,"rscript_test", id))
+sample_id <- dir(file.path(base_dir,"quant"))
+kal_dirs <- sapply(sample_id, function(id) file.path(base_dir,"quant", id))
 s2c <- data.frame(path=kal_dirs,sample=sample_id,condition=condition_df,row.names = NULL,stringsAsFactors = FALSE)
 #ensmeble mart
 mart <- biomaRt::useMart(biomart = "ENSEMBL_MART_ENSEMBL",dataset = "hsapiens_gene_ensembl",host = 'ensembl.org')
