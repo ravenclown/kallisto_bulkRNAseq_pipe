@@ -102,7 +102,8 @@ rule mergeQuant:
         out1="sleuth_object.so",
         out2="gene_table_results.txt"
     params:
-      wd=cwd
+      wd=cwd,
+      condition="conditions.txt"
     conda:
       "r.yml"
     shell:
