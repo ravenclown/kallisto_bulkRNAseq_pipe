@@ -13,13 +13,10 @@ kal_dirs <- sapply(sample_id, function(id) file.path(base_dir,"quant", id))
 s2c <- data.frame(path=kal_dirs,sample=sample_id,condition=condition_df,row.names = NULL,stringsAsFactors = FALSE)
 #ensmeble mart
 mart <- biomaRt::useMart(biomart = "ENSEMBL_MART_ENSEMBL",dataset = "hsapiens_gene_ensembl",host = 'ensembl.org')
-t2g <- biomaRt::getBM(attributes = c("ensembl_transcript_id", "ensembl_gene_id","external_gene_name"), mart = mart)
+t2g <- biomaRt::getBM( attributes = c("ensembl_transcript_id", "transcript_version", "ensembl_gene_id", "external_gene_name", "description","transcript_biotype"),mart = mart)
 t2g <- dplyr::rename(t2g, target_id = ensembl_transcript_id,ens_gene = ensembl_gene_id, ext_gene = external_gene_name)
 #fit
-so <- sleuth_prep(s2c,condition="condition",target_mapping=t2g, extra_bootstrap_summary = TRUE)
-so <- sleuth_fit(so)
-so <- sleuth_wt(so,  'conditionWT')
-#gene table
-gene_table <- sleuth_gene_table(so, 'conditionWT', test_type ="wt")
-sleuth_live(so)
-save(so, file=paste("sleuth_object.so"))
+so <- sleuth_prep(s2c, target_mapping = t2g, aggregation_column = 'ext_gene', gene_mode = TRUE, extra_bootstrap_summary = TRUE)
+#matrix
+matrix <- sleuth_to_matrix(so, "obs_norm", "scaled_reads_per_base")
+write.table(matrix, 'count_matrix.txt', col.names = TRUE)
